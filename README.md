@@ -8,4 +8,3 @@ Portable Execute Reader for deep analysis and educational purpose, helps to unde
 * Expose Dependency
 * Expose Import Functions
 
-per.exe <PE File>
