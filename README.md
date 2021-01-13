@@ -7,3 +7,5 @@ Portable Execute Reader for deep analysis and educational purpose, helps to unde
 * Expose Sections
 * Expose Dependency
 * Expose Import Functions
+
+per.exe <PE File>
