@@ -4,7 +4,7 @@ Portable Execute Reader for deep analysis and educational purpose, helps to unde
 [![PEReader](https://github.com/proxytype/PEReader/blob/main/pereader.PNG)]
 
 * Export Dos, NT, Optional, File Headers Information
-* Expose Sections
-* Expose Dependency
-* Expose Import Functions
+* Expose Sections Information
+* Dependency Detection
+* Import Functions
 
