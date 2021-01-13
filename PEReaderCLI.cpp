@@ -1,8 +1,4 @@
-﻿// PEReaderCLI.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//https://stackoverflow.com/questions/2273603/getting-ordinal-from-function-name-programmatically
-
-//
-#include "Windows.h"
+﻿#include "Windows.h"
 #include <iostream>
 #include <stdio.h>
 #include <conio.h> 
