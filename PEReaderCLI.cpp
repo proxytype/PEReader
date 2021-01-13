@@ -4,21 +4,12 @@
 #include <conio.h> 
 #include <signal.h>
 
-const int MAX_OPTIONS = 7;
 const int MAX_FILEPATH_LENGTH = 255;
 char filename[MAX_FILEPATH_LENGTH] = { 0 };
 
 HANDLE file = NULL;
 DWORD fileSize = NULL;
 DWORD bytesRead = NULL;
-LPVOID fileData = NULL;
-
-PIMAGE_SECTION_HEADER sectionHeader = NULL;
-
-IMAGE_IMPORT_DESCRIPTOR* importDescriptor = NULL;
-PIMAGE_THUNK_DATA thunkData = NULL;
-DWORD thunk = NULL;
-DWORD rawOffset = NULL;
 
 HANDLE hConsole = NULL;
 WORD attributes = 0;
@@ -76,7 +67,6 @@ void printMenuHeader() {
 		printf(" Architecture: 32bit \n");
 	}
 
-	
 	printf(" Size: %d bytes\n", fileSize);
 }
 
