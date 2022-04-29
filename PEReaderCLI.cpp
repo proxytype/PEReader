@@ -23,8 +23,9 @@ enum OPTIONS {
 	OPTIONAL_HEADER = 4,
 	DIRECTORY_ADDRESS = 5,
 	SECTIONS = 6,
-	IMPORTS = 7,
-	EXIT = 8
+	EXPORTS = 7,
+	IMPORTS = 8,
+	EXIT = 9
 };
 
 
@@ -52,7 +53,7 @@ void printMenuHeader() {
 	printf("|    \\ \\_\\   \\ \\____/    \\ \\_\\ \\_\\ \\____\\ \\__/.\\_\\ \\___,_\\ \\____\\\\ \\_\\  |\n");
 	printf("|     \\/_/    \\/___/      \\/_/\\/ /\\/____/\\/__/\\/_/\\/__,_ /\\/____/ \\/_/  |\n");
 	printf("-------------------------------------------------------------------------\n");
-	printf(" by: RudeNetworks.com | version: 0.2 beta\n");
+	printf(" by: RudeNetworks.com | version: 1.1 beta\n");
 
 	SetConsoleTextAttribute(hConsole,
 		FOREGROUND_GREEN);
@@ -84,8 +85,9 @@ int printOptions() {
 	printf(" 4. Optional Header\n");
 	printf(" 5. Directory Address\n");
 	printf(" 6. Sections\n");
-	printf(" 7. Imports\n");
-	printf(" 8. Exit \n");
+	printf(" 7. Exports\n");
+	printf(" 8. Imports\n");
+	printf(" 9. Exit \n");
 	printf(" #: ");
 
 	int val = -1;
@@ -192,7 +194,19 @@ void printSection(PIMAGE_SECTION_HEADER sectionHeader) {
 	printf("\t\t0x%x\tCharacteristics\n", sectionHeader->Characteristics);
 }
 
-void printImport() {
+void printExportSection(PIMAGE_EXPORT_DIRECTORY exported, DWORD exportDirVA) {
+
+	unsigned long* names = (unsigned long*)((char*)exported + exported->AddressOfNames - exportDirVA);
+	if (exported->NumberOfNames != 0) {
+
+		for (unsigned long j = 0; j < exported->NumberOfNames; j++)
+		{
+			printf("\t\t%s(...)\n",  (char*)exported + names[j] - exportDirVA);
+		}
+
+	}
+
+
 }
 
 int routing(PIMAGE_DOS_HEADER dosHeader, PIMAGE_NT_HEADERS ntHeader, PIMAGE_FILE_HEADER fileHeader, PIMAGE_OPTIONAL_HEADER optionalHeader, PIMAGE_DATA_DIRECTORY directory, PBYTE buffer) {
@@ -207,14 +221,24 @@ int routing(PIMAGE_DOS_HEADER dosHeader, PIMAGE_NT_HEADERS ntHeader, PIMAGE_FILE
 	DWORD importDirectoryRVA = directory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;
 	PIMAGE_SECTION_HEADER importSection = NULL;
 
+	DWORD exportDirectoryRVA = directory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
+	DWORD exportDirSize = directory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size;
+
+	PIMAGE_EXPORT_DIRECTORY exports = NULL;
+
 	//finding import section
 	for (int i = 0; i < fileHeader->NumberOfSections; i++)
 	{
 		int indexOffset = i * sectionSize;
+
 		sectionHeader = (PIMAGE_SECTION_HEADER)(buffer + dosHeader->e_lfanew + sizeof(IMAGE_NT_HEADERS) + indexOffset);
 		if (importDirectoryRVA >= sectionHeader->VirtualAddress && importDirectoryRVA < sectionHeader->VirtualAddress + sectionHeader->Misc.VirtualSize) {
 			importSection = sectionHeader;
-			break;
+		}
+
+		if (sectionHeader->VirtualAddress <= exportDirectoryRVA && sectionHeader->VirtualAddress + sectionHeader->Misc.VirtualSize >= exportDirectoryRVA + exportDirSize)
+		{
+			exports = PIMAGE_EXPORT_DIRECTORY(buffer + sectionHeader->PointerToRawData + exportDirectoryRVA - sectionHeader->VirtualAddress);
 		}
 	}
 
@@ -250,10 +274,16 @@ int routing(PIMAGE_DOS_HEADER dosHeader, PIMAGE_NT_HEADERS ntHeader, PIMAGE_FILE
 
 		break;
 	}
+	case EXPORTS:
+		printf("-- PE EXPORTS ---------------------------------------------------\n");
+		if (exports != NULL) {
+			printExportSection(exports, exportDirectoryRVA);
+		}
+		break;
 	case IMPORTS:
 	{
 
-		printf("-- PE DLL IMPORTS ---------------------------------------------------\n");
+		printf("-- PE IMPORTS ---------------------------------------------------\n");
 
 		if (importSection != NULL) {
 
@@ -283,7 +313,7 @@ int routing(PIMAGE_DOS_HEADER dosHeader, PIMAGE_NT_HEADERS ntHeader, PIMAGE_FILE
 						printf("\t\t\Ordinal: 0x%x\n", (WORD)thunkData->u1.AddressOfData);
 					}
 					else {
-						printf("\t\t%s\n", (buffer + importSection->PointerToRawData + (thunkData->u1.AddressOfData - importSection->VirtualAddress + 2)));
+						printf("\t\t%s(...)\n", (buffer + importSection->PointerToRawData + (thunkData->u1.AddressOfData - importSection->VirtualAddress + 2)));
 					}
 				}
 			}
@@ -312,7 +342,7 @@ int init(int argc, char* argv[]) {
 
 	memcpy_s(&filename, MAX_FILEPATH_LENGTH, argv[1], MAX_FILEPATH_LENGTH);
 
-	file = CreateFileA(filename, GENERIC_ALL, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	file =CreateFileA(filename, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (file == INVALID_HANDLE_VALUE) {
 		printf("Could not read file\n");
 		return -1;
@@ -342,8 +372,6 @@ int init(int argc, char* argv[]) {
 			PIMAGE_OPTIONAL_HEADER  optionalHeader = (PIMAGE_OPTIONAL_HEADER)&ntHeader->OptionalHeader;
 			PIMAGE_DATA_DIRECTORY directory = (PIMAGE_DATA_DIRECTORY)&ntHeader->OptionalHeader.DataDirectory;
 
-			PIMAGE_SECTION_HEADER importSection = NULL;
-
 			routing(dosHeader, ntHeader, fileHeader, optionalHeader, directory, buffer);
 			return 0;
 
@@ -354,7 +382,7 @@ int init(int argc, char* argv[]) {
 int main(int argc, char* argv[])
 {
 	if (argc <= 1) {
-		printf("PEReader 0.2 | Args Missing!\nPER.exe <EXE>\nRudenetworks.com\n");
+		printf("PEReader 1.1 beta | Args Missing!\npereader.exe <EXE>\nRudenetworks.com\n");
 		return -1;
 	}
 
