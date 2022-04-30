@@ -23,8 +23,8 @@ enum OPTIONS {
 	OPTIONAL_HEADER = 4,
 	DIRECTORY_ADDRESS = 5,
 	SECTIONS = 6,
-	EXPORTS = 7,
-	IMPORTS = 8,
+	IMPORTS = 7,
+	EXPORTS = 8,
 	EXIT = 9
 };
 
@@ -44,14 +44,13 @@ void printMenuHeader() {
 
 	SetConsoleTextAttribute(hConsole,
 		FOREGROUND_BLUE | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-	printf("-------------------------------------------------------------------------\n");
-	printf("|  ____    ____        ____                        __                   |\n");
-	printf("| /\\  _`\\ /\\  _`\\     /\\  _`\\                     /\\ \\                  |\n");
-	printf("| \\ \\ \\L\\ \\ \\ \\L\\_\\   \\ \\ \\L\\ \\     __     __     \\_\\ \\     __   _ __   |\n");
-	printf("|  \\ \\ ,__/\\ \\  _\\L    \\ \\ ,  /   /'__`\\ /'__`\\   /'_` \\  /'__`\\/\\`'__\\ |\n");
-	printf("|   \\ \\ \\/  \\ \\ \\L\\ \\   \\ \\ \\\\ \\ /\\  __//\\ \\L\\.\\_/\\ \\L\\ \\/\\  __/\\ \\ \\/  |\n");
-	printf("|    \\ \\_\\   \\ \\____/    \\ \\_\\ \\_\\ \\____\\ \\__/.\\_\\ \\___,_\\ \\____\\\\ \\_\\  |\n");
-	printf("|     \\/_/    \\/___/      \\/_/\\/ /\\/____/\\/__/\\/_/\\/__,_ /\\/____/ \\/_/  |\n");
+	printf(" _______  _______  ______    _______  _______  ______   _______  ______   \n");
+	printf("|       ||       ||    _ |  |       ||   _   ||      | |       ||    _ |  \n");
+	printf("|    _  ||    ___||   | ||  |    ___||  |_|  ||  _    ||    ___||   | ||  \n");
+	printf("|   |_| ||   |___ |   |_||_ |   |___ |       || | |   ||   |___ |   |_||_ \n");
+	printf("|    ___||    ___||    __  ||    ___||       || |_|   ||    ___||    __  |\n");
+	printf("|   |    |   |___ |   |  | ||   |___ |   _   ||       ||   |___ |   |  | |\n");
+	printf("|___|    |_______||___|  |_||_______||__| |__||______| |_______||___|  |_|\n");
 	printf("-------------------------------------------------------------------------\n");
 	printf(" by: RudeNetworks.com | version: 1.1 beta\n");
 
@@ -85,8 +84,8 @@ int printOptions() {
 	printf(" 4. Optional Header\n");
 	printf(" 5. Directory Address\n");
 	printf(" 6. Sections\n");
-	printf(" 7. Exports\n");
-	printf(" 8. Imports\n");
+	printf(" 7. Imports\n");
+	printf(" 8. Exports\n");
 	printf(" 9. Exit \n");
 	printf(" #: ");
 
