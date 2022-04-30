@@ -7,4 +7,5 @@ Portable Execute Reader for deep analysis and educational purpose, helps to unde
 * Expose Sections Information
 * Dependency Detection
 * Import Functions
+* Export Functions
 
